@@ -32,11 +32,7 @@ public class PasswordRestControllerTest {
 
 	@Test
 	public void validPassword() {
-		PasswordValidationRequest request = new PasswordValidationRequest("1qaz2wsx");
-		HttpEntity<PasswordValidationRequest> entity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<BaseResponse> response = restTemplate.exchange(createURLWithPort(API_PATH), HttpMethod.POST,
-				entity, BaseResponse.class);
+		ResponseEntity<BaseResponse> response = getResponse("1qaz2wsx");
 		BaseResponse repBody = response.getBody();
 
 		assertTrue(HttpStatus.OK == response.getStatusCode());
@@ -46,11 +42,7 @@ public class PasswordRestControllerTest {
 
 	@Test
 	public void inValidPasswordWithSingleError() throws JSONException {
-		PasswordValidationRequest request = new PasswordValidationRequest("qwertyrty123");
-		HttpEntity<PasswordValidationRequest> entity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<BaseResponse> response = restTemplate.exchange(createURLWithPort(API_PATH), HttpMethod.POST,
-				entity, BaseResponse.class);
+		ResponseEntity<BaseResponse> response = getResponse("qwertyrty123");
 		BaseResponse repBody = response.getBody();
 
 		assertTrue(HttpStatus.BAD_REQUEST == response.getStatusCode());
@@ -61,11 +53,7 @@ public class PasswordRestControllerTest {
 
 	@Test
 	public void inValidPasswordWithMultiErrors() throws JSONException {
-		PasswordValidationRequest request = new PasswordValidationRequest("1qaz@WSXedcedc");
-		HttpEntity<PasswordValidationRequest> entity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<BaseResponse> response = restTemplate.exchange(createURLWithPort(API_PATH), HttpMethod.POST,
-				entity, BaseResponse.class);
+		ResponseEntity<BaseResponse> response = getResponse("1qaz@WSXedcedc");
 		BaseResponse repBody = response.getBody();
 
 		assertTrue(HttpStatus.BAD_REQUEST == response.getStatusCode());
@@ -78,6 +66,13 @@ public class PasswordRestControllerTest {
 
 	private String createURLWithPort(String uri) {
 		return "http://localhost:" + port + uri;
+	}
+
+	private ResponseEntity<BaseResponse> getResponse(String testcase) {
+		PasswordValidationRequest request = new PasswordValidationRequest(testcase);
+		HttpEntity<PasswordValidationRequest> entity = new HttpEntity<>(request, headers);
+
+		return restTemplate.exchange(createURLWithPort(API_PATH), HttpMethod.POST, entity, BaseResponse.class);
 	}
 
 }
